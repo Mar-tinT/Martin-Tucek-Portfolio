@@ -1,0 +1,49 @@
+Private Sub Email_to_Factory_Click()
+'This macro exports current sheet with a list of orders we want to cancel into a new Excel file which is then attached to a pre-filled email.
+
+    Application.DisplayAlerts = False
+    Dim OutlookApp As Object
+    Dim OutlookMail As Object
+
+    'Export current sheet to a new Excel file
+    Sheets("Form Japan").Select
+    Cells.Select
+    Selection.Copy
+    Workbooks.Add
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    
+    Destination = Environ("USERPROFILE") & "\Desktop\forms\"
+    Filename = Range("L2") & " - Cancellation request - " & Range("C7").Value & " - " & Range("C6").Value & " - " & Range("C11").Value & ".xlsx"
+    ActiveWorkbook.SaveAs Destination & Filename, xlOpenXMLWorkbook
+    Application.DisplayAlerts = True
+    'ActiveWorkbook.Close
+
+    Set OutlookApp = CreateObject("Outlook.Application")
+    Set OutlookMail = OutlookApp.CreateItem(0)
+
+    ' Email body
+    xMailBody = "Hello," & vbNewLine & vbNewLine & _
+              "Please find attached our request." & vbNewLine & vbNewLine & _
+              "Thank you for your support." & vbNewLine & _
+              "Best Regards," & vbNewLine & _
+              Application.Range("D6") & vbNewLine & _
+              
+                  On Error Resume Next
+
+   'Compose email
+   With OutlookMail
+      .To = "name1@email.com"
+      .CC = "name2@email.com"
+      .Subject = "Cancellation request - " & Application.Range("C7") & " - " & Application.Range("C6") & " - " & Application.Range("C11")
+      .body = xMailBody
+      .Attachments.Add ActiveWorkbook.FullName
+      .Display
+   End With
+ 
+   Set OutlookMail = Nothing
+   Set OutlookApp = Nothing
+End Sub
