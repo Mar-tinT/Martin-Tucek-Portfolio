@@ -1,0 +1,19 @@
+#!/bin/bash
+# If disk space is running out, this script finds files bigger than 500 MB and saves it in a file on Desktop.
+
+MAX_DISK_USAGE_PERCENTAGE=90
+OUTPUT_FILE="/home/martin/Desktop/BIG_FILES.txt"
+
+disk_usage_percentage=$(df -h / | awk 'NR==2 {print $5}' | grep -o '[0-9]*') # Get disk usage percentage of the root filesystem
+
+if [[ "${disk_usage_percentage}" -gt ${MAX_DISK_USAGE_PERCENTAGE} ]]; then
+    date > "${OUTPUT_FILE}" # Prints current date and time
+    df -H /dev/sda2 >> "${OUTPUT_FILE}" # Prints disk usage information about the partition.
+    echo "--------------------------------------------------" >> "${OUTPUT_FILE}" 
+
+    find /home -type f -size +500M -exec du -h {} \; | sort -hr >> "${OUTPUT_FILE}" # Finds files bigger than 500MB in /home
+    /usr/bin/notify-send "Not enough free space - ${disk_usage_percentage}%. Please check the file on Desktop." # Notifies the user to check the file on Desktop
+
+else
+    /usr/bin/notify-send "Enough free space - Disk full from ${disk_usage_percentage}%"
+fi
