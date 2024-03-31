@@ -1,0 +1,29 @@
+Sub Saving Lead Time files()
+    'This macro itinerates over a list of customers in database taken from SAP and saves for each one the data into a new Excel file. The name of the file includes the current week number.
+    Application.ScreenUpdating = False
+    
+    Dim criteriaArray As Variant
+    criteriaArray = Array("B0001", "B0002", "B0003", "B0004") '+80 further customers' codes
+    
+    For Each criteria In criteriaArray
+        Windows("Lead_time_data_from_SAP.xlsx").Activate
+        ActiveSheet.Range("$A$1:$F$136299").AutoFilter Field:=2, Criteria1:=criteria
+        Cells.Select
+        Selection.Copy
+        Workbooks.Add
+        ActiveSheet.Paste
+        Selection.AutoFilter
+        Cells.EntireColumn.AutoFit
+        Range("A1").Select
+        
+        'Saving the file
+        Application.DisplayAlerts = False
+        Destination = Environ("USERPROFILE") & "\Desktop\LT\"
+        filename = Range("B2").Value & " - " & "Lead Time CW" & Application.WeekNum(Date, 21) & ".xlsx"
+        ActiveWorkbook.SaveAs Destination & filename, xlOpenXMLWorkbook
+        Application.DisplayAlerts = True
+        ActiveWorkbook.Close
+    Next criteria
+    
+    Application.ScreenUpdating = True
+End Sub
