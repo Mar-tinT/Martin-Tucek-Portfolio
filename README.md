@@ -1,4 +1,4 @@
-# Martin-Tucek-Portfolio
+# Martin Tuček - Portfolio
 
 Hier sind einige Projekte, die ich in den letzten Jahren erstellt habe.
 
