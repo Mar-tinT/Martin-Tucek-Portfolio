@@ -3,9 +3,9 @@ Sub Saving Lead Time files()
     Application.ScreenUpdating = False
     
     Dim criteriaArray As Variant
-    criteriaArray = Array("B0001", "B0002", "B0003", "B0004") '+80 further customers' codes
+    customers = Array("B0001", "B0002", "B0003", "B0004") '+80 further customers' codes
     
-    For Each criteria In criteriaArray
+    For Each criteria In customers
         Windows("Lead_time_data_from_SAP.xlsx").Activate
         ActiveSheet.Range("$A$1:$F$136299").AutoFilter Field:=2, Criteria1:=criteria
         Cells.Select
